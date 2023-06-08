@@ -1,0 +1,84 @@
+@import "bootstrap/scss/bootstrap";
+@import "@fortawesome/fontawesome-free/scss/fontawesome";
+@import "@fortawesome/fontawesome-free/scss/solid";
+@import "@fortawesome/fontawesome-free/scss/regular";
+@import "@fortawesome/fontawesome-free/scss/brands";
+
+@import "./navbar.scss";
+@import "./sidebar.scss";
+@import "./login.scss";
+
+:root{
+    --primary-color:#2ecc71;
+    --secondary-color:#27ae60;
+    --color-orange:#f39c12;
+    --color-yellow:#f1c40f;
+    --text-color:#7f8c8d;
+    --text-color2:#2c3e50;
+}
+*{
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+}
+
+.section_title{
+    color: gray;
+    font-size: 25px;
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+.main{
+    margin-left: 300px;
+    margin-top: 50px;
+}
+.header{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    margin-bottom: 20px;
+
+    h2{
+        color: var(--secondary-color);
+        font-size: 18px;
+    }
+    .add{
+        text-decoration: none;
+        padding: 5px 10px;
+        background-color: var(--primary-color);
+        color:white;
+        border-radius: 5px;
+       
+        
+    }
+}
+.path{
+    font-size: 14px;
+    a{
+        text-decoration: none;
+        color: var(--text-color);
+    }
+    span{
+        color: var(--secondary-color);
+    }
+}
+.actions{
+    .icon_eye{
+        color:var(--color-orange);
+    }
+    .icon_edit{
+        color: #2980b9;
+        margin-left: 10px;
+    }
+    .icon-trash{
+        color: #e74c3c;
+        margin-left: 10px;
+    }
+}
+table{
+    .status{
+        color:var(--primary-color);
+        font-weight: 600;
+    }
+}
