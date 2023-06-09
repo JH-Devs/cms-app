@@ -149,7 +149,7 @@ const Contract = () => {
             <td>Projekt 1</td>
             <td>25.3.2023</td>
             <td>25.12.2023</td>
-            <td className='status'>probíhající</td>
+            <td className='status-jednani'>v jednání</td>
             <td>150 000 Kč</td>
             <td>180 000 Kč</td>
             <td>
@@ -170,7 +170,7 @@ const Contract = () => {
             <td>Projekt 1</td>
             <td>25.3.2023</td>
             <td>25.12.2023</td>
-            <td className='status'>probíhající</td>
+            <td className='status-probihajici'>probíhající</td>
             <td>150 000 Kč</td>
             <td>180 000 Kč</td>
             <td>
@@ -191,7 +191,7 @@ const Contract = () => {
             <td>Projekt 1</td>
             <td>25.3.2023</td>
             <td>25.12.2023</td>
-            <td className='status'>probíhající</td>
+            <td className='status-dokonceno'>dokončeno</td>
             <td>150 000 Kč</td>
             <td>180 000 Kč</td>
             <td>
@@ -212,7 +212,28 @@ const Contract = () => {
             <td>Projekt 1</td>
             <td>25.3.2023</td>
             <td>25.12.2023</td>
-            <td className='status'>probíhající</td>
+            <td className='status-storno'>storno</td>
+            <td>150 000 Kč</td>
+            <td>180 000 Kč</td>
+            <td>
+                <div className="actions">
+                <Link onClick={handleShowModal}>
+                          <BsEyeFill className="icon_eye" />
+                        </Link>
+                        <Link onClick={handleEditModal}>
+                        <MdEdit className="icon_edit" />
+                      </Link>
+                    <BsFillTrashFill className='icon_trash' />
+                </div>
+            </td>
+            </tr>
+            <tr>
+            <th scope="row">5</th>
+            <td>Firma 1</td>
+            <td>Projekt 1</td>
+            <td>25.3.2023</td>
+            <td>25.12.2023</td>
+            <td className='status-predano'>předáno</td>
             <td>150 000 Kč</td>
             <td>180 000 Kč</td>
             <td>

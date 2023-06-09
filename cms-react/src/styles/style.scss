@@ -15,6 +15,7 @@
     --color-yellow:#f1c40f;
     --text-color:#7f8c8d;
     --text-color2:#2c3e50;
+ 
 }
 *{
     margin:0;
@@ -71,14 +72,30 @@
         color: #2980b9;
         margin-left: 10px;
     }
-    .icon-trash{
+    .icon_trash{
         color: #e74c3c;
         margin-left: 10px;
     }
 }
 table{
-    .status{
+    .status-jednani{
+        color:#3498db;
+        font-weight: 600;
+    }
+    .status-probihajici{
+        color:var(--color-orange);
+        font-weight: 600;
+    }
+    .status-dokonceno{
         color:var(--primary-color);
+        font-weight: 600;
+    }
+    .status-storno{
+        color:#e74c3c;
+        font-weight: 600;
+    }
+    .status-predano{
+        color:#9b59b6;
         font-weight: 600;
     }
 }
