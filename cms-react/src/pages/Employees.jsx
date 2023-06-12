@@ -23,6 +23,7 @@ const Employees = () => {
     const [prac, setPrac] = useState('');
     const [code, setCode] = useState('');
     const [bank, setBank] = useState('');
+    const [hod, setHod] = useState('');
     const [comment, setComment] = useState('');
 
 
@@ -114,6 +115,9 @@ const Employees = () => {
     };
     const handleCommentChange = (e) => {
       setComment(e.target.value);
+    };
+    const handleHodChange = (e) => {
+      setHod(e.target.value);
     };
 
     
@@ -293,6 +297,7 @@ const Employees = () => {
                     <Form.Label>Kód zaměstnance</Form.Label>
                     <Form.Control type="text" value={code} onChange={handleCodeChange} />
                   </Form.Group>
+
                   <Form.Group controlId="address" className='col-8'>
                     <Form.Label >Adresa</Form.Label>
                     <Form.Control type="text" value={address} onChange={handleAddressChange} />
@@ -355,6 +360,10 @@ const Employees = () => {
                   <Form.Group controlId="code" className='col-8'>
                     <Form.Label>Kód zaměstnance</Form.Label>
                     <Form.Control type="text" value={code} onChange={handleCodeChange} />
+                  </Form.Group>
+                  <Form.Group controlId="hod" className='col-8'>
+                    <Form.Label>Odpracované hodiny</Form.Label>
+                    <Form.Control type="text" value={hod} onChange={handleHodChange} />
                   </Form.Group>
                   <Form.Group controlId="address" className='col-8'>
                     <Form.Label >Adresa</Form.Label>
