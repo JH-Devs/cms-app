@@ -5,6 +5,11 @@ import Dashboard from '../pages/Dashboard'
 import Login from '../pages/Login'
 import Contract from '../pages/Contract'
 import Project from '../pages/Project'
+import Customers from '../pages/Customers'
+import Employees from '../pages/Employees'
+import Worked from '../pages/Worked'
+import Contacts from '../pages/Contacts'
+import CalendarHome from '../pages/CalendarHome'
 
 const Router = () => {
   return (
@@ -15,6 +20,11 @@ const Router = () => {
         </Route>
         <Route path="/zakazky" element ={<Contract />} />
         <Route path="/projekty" element ={<Project />} />
+        <Route path="/zakaznici" element ={<Customers />} />
+        <Route path="/zamestnanci" element ={<Employees />} />
+        <Route path="/odpracovane-hodiny" element ={<Worked />} />
+        <Route path="/kalendar" element ={<CalendarHome />} />
+        <Route path="/adresar" element ={<Contacts />} />
     </Routes>
   )
 }

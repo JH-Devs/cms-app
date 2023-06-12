@@ -41,7 +41,7 @@ const Sidebar = () => {
               <li>
                 <span>
                   <NavLink
-                    to='zakaznici'
+                    to='/zakaznici'
                     activeClassName='nav__active'
                   >
                     Zákazníci

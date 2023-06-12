@@ -286,7 +286,7 @@ const Contract = () => {
           </Modal.Header>
           <Modal.Body>
           <div className="path">
-              <Link to="/admin">Admin</Link> &gt; <Link to="/admin/zakazky">Zakázky</Link> &gt; <span>Přidat zakázku</span>
+              <Link to="/nastenka">Nástěnka</Link> &gt; <Link to="/zakazky">Zakázky</Link> &gt; <span>Přidat zakázku</span>
             </div>
               <Form className='row g-3 form_add' onSubmit={handleAddSubmit}>  
               <Form.Group controlId="company" className='col-8'>
@@ -358,9 +358,9 @@ const Contract = () => {
           </Modal.Header>
           <Modal.Body>
           <div className="path">
-              <Link to="/admin">Admin</Link> &gt; <Link to="/admin/zakazky">Zakázky</Link> &gt; <span>Upravit zakázku</span>
+              <Link to="/anastenka">Nástěnka</Link> &gt; <Link to="/zakazky">Zakázky</Link> &gt; <span>Upravit zakázku</span>
             </div>
-              <Form className='row g-3 form_add' onSubmit={handleAddSubmit}>  
+              <Form className='row g-3 form_add' onSubmit={handleEditSubmit}>  
               <Form.Group controlId="company" className='col-8'>
                     <Form.Label>Firma</Form.Label>
                     <Form.Select value={company} onChange={handleCompanyChange}>

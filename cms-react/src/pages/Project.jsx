@@ -214,7 +214,7 @@ const Project = () => {
           </Modal.Header>
           <Modal.Body>
           <div className="path">
-                <Link to="/admin">Admin</Link> &gt; <Link to="/admin/projekty">Projekty</Link> &gt; <span>Přidat projekty</span>
+                <Link to="/nastenka">Nástěnka</Link> &gt; <Link to="/projekty">Projekty</Link> &gt; <span>Přidat projekty</span>
               </div>
               <Form className='row g-3 form_add' onSubmit={handleAddSubmit}>
                 <Form.Group controlId="company" className='col-8'>
@@ -248,7 +248,7 @@ const Project = () => {
           </Modal.Header>
           <Modal.Body>
           <div className="path">
-                <Link to="/admin">Admin</Link> &gt; <Link to="/admin/projekty">Projekty</Link> &gt; <span>Upravit projekty</span>
+                <Link to="/nastenka">Nástěnka</Link> &gt; <Link to="/projekty">Projekty</Link> &gt; <span>Upravit projekty</span>
               </div>
               <Form className='row g-3 form_add' onSubmit={handleAddSubmit}>
                 <Form.Group controlId="company" className='col-8'>
