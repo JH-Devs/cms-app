@@ -4,14 +4,11 @@ import { Container, Row, Modal, Form, Button } from 'react-bootstrap'
 import Navbar from '../components/Navbar'
 import Sidebar from '../components/Sidebar'
 import { Link } from 'react-router-dom'
-import { Calendar, dateFnsLocalizer } from 'react-big-calendar'
+import { Calendar, momentLocalizer } from 'react-big-calendar'
 import format from 'date-fns/format'
-import parse from 'date-fns/parse'
-import startOfWeek from 'date-fns/startOfWeek'
-import getDay from 'date-fns/getDay'
-import cs from 'date-fns/locale/cs';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
-
+import moment from 'moment';
+import 'moment/locale/cs';
+import "react-big-calendar/lib/css/react-big-calendar.css"
 
 const EventForm = ({ onSubmit, onCancel }) => {
     const [formData, setFormData] = useState({
@@ -20,24 +17,23 @@ const EventForm = ({ onSubmit, onCancel }) => {
       end: '',
       location: '',
     });
-  
-    const handleChange = (e) => {
-      const { name, value } = e.target;
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
-    };
-  
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      onSubmit(formData);
-    };
-  
-    const handleCancel = () => {
-      onCancel();
-    };
-  
+
+const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
+  const handleCancel = () => {
+    onCancel();
+  };
     return (
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="eventTitle">
@@ -77,57 +73,59 @@ const EventForm = ({ onSubmit, onCancel }) => {
           />
         </Form.Group>
         <div className="buttons">
-        <Button variant="secondary"  onClick={handleCancel}>
-          Zrušit
-        </Button>
-        <Button variant="primary" type="submit">
-          Přidat
-        </Button>
+          <Button variant="secondary" onClick={handleCancel}>
+            Zrušit
+          </Button>
+          <Button variant="primary" type="submit">
+            Přidat
+          </Button>
         </div>
       </Form>
     );
   };
-
-const CalendarHome = () => {
+  
+  const CalendarHome = () => {
     const [events, setEvents] = useState([]);
-    const [showModal, setShowModal] = useState(false);
-    const [selectedEvent, setSelectedEvent] = useState(null);
-  
-    const locales = {
-      cs: cs,
+  const [showForm, setShowForm] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+
+  // Nastavení locale na 'cs' pro Moment.js
+  moment.locale('cs');
+
+  const [showFormModal, setShowFormModal] = useState(false);
+
+const handleAddEvent = () => {
+  setShowFormModal(true);
+};
+
+const handleCloseFormModal = () => {
+  setShowFormModal(false);
+};
+
+  const localizer = momentLocalizer(moment);
+
+  const handleSelect = ({ start, end }) => {
+    setShowForm(true);
+  };
+
+  const handleFormSubmit = (formData) => {
+    const { title, start, end, location } = formData;
+    const newEvent = {
+      start,
+      end,
+      title,
+      location,
     };
-  
-    const localizer = dateFnsLocalizer({
-      format,
-      parse,
-      startOfWeek,
-      getDay,
-      locales,
-    });
-  
-    const handleSelect = ({ start, end }) => {
-      setShowModal(true);
-    };
-    const handleSelectEvent = (event) => {
-        setSelectedEvent(event);
-        setShowModal(true);
-      };
-  
-    const handleFormSubmit = (formData) => {
-      const { title, start, end, location } = formData;
-      const newEvent = {
-        start,
-        end,
-        title,
-        location,
-      };
-      setEvents([...events, newEvent]);
-      setShowModal(false);
-    };
-  
-    const handleFormCancel = () => {
-      setShowModal(false);
-    };
+    setEvents([...events, newEvent]);
+    setShowForm(false);
+  };
+
+  const handleFormCancel = () => {
+    setShowForm(false);
+  };
+  const handleSelectEvent = (event) => {
+    setSelectedEvent(event);
+  };
   return (
     <Helmet title=" - Kalendář">
       <Container fluid>
@@ -141,48 +139,61 @@ const CalendarHome = () => {
               </div>
               <div className="header">
                 <h2>Kalendář</h2>
+                <Link className="add" onClick={handleAddEvent}>
+                    Přidat událost
+                </Link>
+                <Modal show={showFormModal} onHide={handleFormCancel} centered>
+                    <Modal.Header closeButton>
+                    <Modal.Title>Přidat událost</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                    <EventForm onSubmit={handleFormSubmit} onCancel={handleCloseFormModal} />
+                    </Modal.Body>
+                    <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseFormModal}>
+                        Zavřít
+                    </Button>
+                    </Modal.Footer>
+                </Modal>
               </div>
-              <Calendar
-                localizer={localizer}
-                events={events}
-                startAccessor="start"
-                endAccessor="end"
-                selectable
-                onSelectSlot={handleSelect}
-                onSelectEvent={handleSelectEvent}
-                style={{ height: 500 }}
-              />
-                          <Modal
-                show={showModal}
-                onHide={handleFormCancel}
-                centered
-                contentClassName="event-modal"
-              >
-                <Modal.Header closeButton>
-                  <Modal.Title>
-                    {selectedEvent ? 'Detail události' : 'Vytvořit událost'}
-                  </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  {selectedEvent ? (
-                    <div>
-                      <h4>{selectedEvent.title}</h4>
-                      <p>
-                      Začátek: {selectedEvent.start && format(selectedEvent.start, 'dd.MM.yyyy HH:mm')}
-                      </p>
-                      <p>Konec: {selectedEvent.end && format(selectedEvent.end, 'dd.MM.yyyy HH:mm')}</p>
-                      <p>Místo: {selectedEvent.location}</p>
-                    </div>
-                  ) : (
-                    <EventForm onSubmit={handleFormSubmit} onCancel={handleFormCancel} />
-                  )}
-                </Modal.Body>
-                <Modal.Footer>
-                  <Button variant="secondary" onClick={handleFormCancel}>
-                    Zavřít
-                  </Button>
-                </Modal.Footer>
-              </Modal>
+              <div className="calendar-container">
+            <Calendar
+              selectable
+              localizer={localizer}
+              events={events}
+              onSelectSlot={handleSelect}
+              onSelectEvent={handleSelectEvent}
+              style={{ height: 500 }}
+              messages={{
+                today: 'Dnes',
+                previous: 'Předchozí',
+                next: 'Další',
+                month: 'Měsíc',
+                week: 'Týden',
+                day: 'Den',
+                agenda: 'Agenda',
+                date: 'Datum',
+                time: 'Čas',
+                event: 'Událost',
+                noEventsInRange: 'Žádné události',
+                showMore: (total) => `Zobrazit další (${total})`,
+              }}
+            />
+          </div>
+          <div className="event-list">
+            <h2>Seznam událostí</h2>
+            <ul>
+              {events.map((event, index) => (
+                <li key={index}>
+                  <strong>{event.title}</strong> - {event.location} -{' '}
+                  {moment(event.start).format('lll')} -{' '}
+                  {moment(event.end).format('lll')}
+                </li>
+              ))}
+            </ul>
+          </div>
+         
+    
             </div>
           </div>
         </Row>
