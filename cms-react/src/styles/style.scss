@@ -105,3 +105,14 @@ table{
     display: flex;
     justify-content: space-between;
 }
+.form_add{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+    
+}
+.modal{
+    display: flex;
+    flex-direction: column;
+}

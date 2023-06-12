@@ -4,12 +4,14 @@ import { Container, Row, Modal, Form, Button } from 'react-bootstrap'
 import Navbar from '../components/Navbar'
 import Sidebar from '../components/Sidebar'
 import { Link } from 'react-router-dom'
-import { Calendar, momentLocalizer } from 'react-big-calendar'
-import format from 'date-fns/format'
+import { Calendar, momentLocalizer} from 'react-big-calendar'
 import moment from 'moment';
-import 'moment/locale/cs';
 import "react-big-calendar/lib/css/react-big-calendar.css"
+import 'moment/locale/cs';
+import cs from 'moment/dist/locale/cs'
 
+
+moment.locale('cs'); 
 const EventForm = ({ onSubmit, onCancel }) => {
     const [formData, setFormData] = useState({
       title: '',
@@ -35,7 +37,7 @@ const handleChange = (e) => {
     onCancel();
   };
     return (
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit} className='row g-3 form_add'>
         <Form.Group controlId="eventTitle">
           <Form.Label>Název události</Form.Label>
           <Form.Control
@@ -86,27 +88,10 @@ const handleChange = (e) => {
   
   const CalendarHome = () => {
     const [events, setEvents] = useState([]);
-  const [showForm, setShowForm] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState(null);
+    const [showFormModal, setShowFormModal] = useState(false);
+  
+    const localizer = momentLocalizer(moment);
 
-  // Nastavení locale na 'cs' pro Moment.js
-  moment.locale('cs');
-
-  const [showFormModal, setShowFormModal] = useState(false);
-
-const handleAddEvent = () => {
-  setShowFormModal(true);
-};
-
-const handleCloseFormModal = () => {
-  setShowFormModal(false);
-};
-
-  const localizer = momentLocalizer(moment);
-
-  const handleSelect = ({ start, end }) => {
-    setShowForm(true);
-  };
 
   const handleFormSubmit = (formData) => {
     const { title, start, end, location } = formData;
@@ -117,14 +102,47 @@ const handleCloseFormModal = () => {
       location,
     };
     setEvents([...events, newEvent]);
-    setShowForm(false);
+    setShowFormModal(false);
+  };
+
+const handleAddEvent = () => {
+  setShowFormModal(true);
+};
+
+const handleCloseFormModal = () => {
+  setShowFormModal(false);
+};
+
+
+  const handleSelect = ({ start, end }) => {
+    setShowFormModal(true);
   };
 
   const handleFormCancel = () => {
-    setShowForm(false);
+    setShowFormModal(false);
   };
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
+  };
+
+  const messages = {
+    allDay: 'Celý den',
+    previous: 'Předchozí',
+    next: 'Další',
+    today: 'Dnes',
+    month: 'Měsíc',
+    week: 'Týden',
+    day: 'Den',
+    agenda: 'Agenda',
+    date: 'Datum',
+    time: 'Čas',
+    event: 'Událost',
+    noEventsInRange: 'Žádné události',
+    monthNames: moment.months(),
+    monthNamesShort: moment.monthsShort(),
+    dayNames: moment.weekdays(),
+    dayNamesShort: moment.weekdaysShort(),
+    dayNamesMin: moment.weekdaysMin(),
   };
   return (
     <Helmet title=" - Kalendář">
@@ -142,7 +160,7 @@ const handleCloseFormModal = () => {
                 <Link className="add" onClick={handleAddEvent}>
                     Přidat událost
                 </Link>
-                <Modal show={showFormModal} onHide={handleFormCancel} centered>
+                <Modal show={showFormModal} onHide={handleFormCancel} centered size='xl' className='modal'>
                     <Modal.Header closeButton>
                     <Modal.Title>Přidat událost</Modal.Title>
                     </Modal.Header>
@@ -160,28 +178,16 @@ const handleCloseFormModal = () => {
             <Calendar
               selectable
               localizer={localizer}
+              messages={messages}
               events={events}
               onSelectSlot={handleSelect}
               onSelectEvent={handleSelectEvent}
               style={{ height: 500 }}
-              messages={{
-                today: 'Dnes',
-                previous: 'Předchozí',
-                next: 'Další',
-                month: 'Měsíc',
-                week: 'Týden',
-                day: 'Den',
-                agenda: 'Agenda',
-                date: 'Datum',
-                time: 'Čas',
-                event: 'Událost',
-                noEventsInRange: 'Žádné události',
-                showMore: (total) => `Zobrazit další (${total})`,
-              }}
+             
             />
           </div>
-          <div className="event-list">
-            <h2>Seznam událostí</h2>
+          <div className="event-list mt-3">
+            <h2 className='text-success'>Seznam událostí</h2>
             <ul>
               {events.map((event, index) => (
                 <li key={index}>
@@ -192,8 +198,6 @@ const handleCloseFormModal = () => {
               ))}
             </ul>
           </div>
-         
-    
             </div>
           </div>
         </Row>

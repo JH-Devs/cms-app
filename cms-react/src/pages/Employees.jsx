@@ -245,7 +245,7 @@ const Employees = () => {
     </Row>
     <Modal show={showModal} onHide={handleCloseModal} className='modal' size='xl'>
           <Modal.Header closeButton>
-            <Modal.Title>Detail zákazníka</Modal.Title>
+            <Modal.Title>Detail zaměstnance</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <span className='fw-bold'>Jméno</span>
@@ -274,7 +274,7 @@ const Employees = () => {
 
         <Modal show={addModal} onHide={handleAddCloseModal} className='modal' size='xl'>
           <Modal.Header closeButton>
-            <Modal.Title>Přidat zaměštnance</Modal.Title>
+            <Modal.Title>Přidat zaměstnance</Modal.Title>
           </Modal.Header>
           <Modal.Body>
           <div className="path">
