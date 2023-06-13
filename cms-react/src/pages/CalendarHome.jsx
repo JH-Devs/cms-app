@@ -124,6 +124,10 @@ const handleCloseFormModal = () => {
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
   };
+  const handleSelectAgenda = (event) => {
+    // Zde můžete implementovat kód pro zpracování kliknutí na agendu
+    console.log('Kliknuto na agendu:', event);
+  };
 
   const messages = {
     allDay: 'Celý den',
@@ -182,6 +186,7 @@ const handleCloseFormModal = () => {
               events={events}
               onSelectSlot={handleSelect}
               onSelectEvent={handleSelectEvent}
+              onSelectAgenda={handleSelectAgenda} 
               style={{ height: 500 }}
              
             />

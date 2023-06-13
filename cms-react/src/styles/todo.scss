@@ -1,0 +1,37 @@
+.todo-container{
+    display: flex;
+    justify-content: space-between;
+    .column-1{
+        background-color: aqua;
+    }
+
+    div{
+        border: 1px solid lightgrey;
+        border-radius: 5px;
+        padding: 8px;
+        margin-bottom: 8px;
+        width: 30%;
+        
+        
+
+        #task-1{
+            background-color:var(--color-orange);
+        }
+    
+        #task-2{
+            background-color: var(--color-blue);
+        }
+        #task-3{
+            background-color: var(--primary-color);
+        }
+
+        .task-list{
+            width: 100%;
+            
+            .task{
+                width: 100%;
+                background-color: white;
+            }
+        }
+    }
+}

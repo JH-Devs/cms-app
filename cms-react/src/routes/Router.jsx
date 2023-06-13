@@ -10,6 +10,7 @@ import Employees from '../pages/Employees'
 import Worked from '../pages/Worked'
 import Contacts from '../pages/Contacts'
 import CalendarHome from '../pages/CalendarHome'
+import ToDo from '../pages/ToDo'
 
 const Router = () => {
   return (
@@ -23,8 +24,10 @@ const Router = () => {
         <Route path="/zakaznici" element ={<Customers />} />
         <Route path="/zamestnanci" element ={<Employees />} />
         <Route path="/odpracovane-hodiny" element ={<Worked />} />
+        <Route path="/planovac" element ={<ToDo />} />
         <Route path="/kalendar" element ={<CalendarHome />} />
         <Route path="/adresar" element ={<Contacts />} />
+        
     </Routes>
   )
 }
