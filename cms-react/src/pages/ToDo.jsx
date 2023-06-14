@@ -1,197 +1,286 @@
-import React, {useState} from 'react'
-import Helmet from '../components/helmet/Helmet'
-import { Container, Row, Modal, Button, Form } from 'react-bootstrap'
-import Navbar from '../components/Navbar'
-import { Link } from 'react-router-dom'
-import Sidebar from '../components/Sidebar'
+import React, { useState, useEffect } from 'react';
+import Helmet from '../components/helmet/Helmet';
+import Navbar from '../components/Navbar';
+import Sidebar from '../components/Sidebar';
+import { Container, Row, Modal, Button, Form } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-
-const initialTasks = [
-    { id: 'task-1', content: 'Úkol 1', status: 'Úkoly' },
-    { id: 'task-2', content: 'Úkol 2', status: 'Úkoly' },
-    { id: 'task-3', content: 'Úkol 3', status: 'Probíhající' },
-    { id: 'task-4', content: 'Úkol 4', status: 'Dokončeno' },
-  ];
-
+import { BsFillTrashFill } from 'react-icons/bs';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { format } from 'date-fns';
+import axios from 'axios';
 
 const ToDo = () => {
-    const [tasks, setTasks] = useState(initialTasks);
-    const [showModal, setShowModal] = useState(false);
-    const [newTaskContent, setNewTaskContent] = useState('');
+  const [todos, setTodos] = useState({
+    'Úkoly': [],
+    'Probíhající': [],
+    'Dokončeno': [],
+  });
+  const [showModal, setShowModal] = useState(false);
+  const [newTodoContent, setNewTodoContent] = useState('');
+  const [todoDescription, setTodoDescription] = useState('');
+  const [selectedTodo, setSelectedTodo] = useState(null);
+  const [showTodoDetailsModal, setShowTodoDetailsModal] = useState(false);
+  const [todoCreated, setTodoCreated] = useState('');
+  const [todoDeadline, setTodoDeadline] = useState('');
 
-    const handleDragEnd = (result) => {
-      if (!result.destination) return;
-  
-      const { source, destination } = result;
-      if (source.droppableId === destination.droppableId && source.index === destination.index) return;
-  
-      const sourceColumn = getColumnTasks(source.droppableId);
-      const destinationColumn = getColumnTasks(destination.droppableId);
-  
-      const draggedTask = sourceColumn[source.index];
-      const newSourceColumn = Array.from(sourceColumn);
-      newSourceColumn.splice(source.index, 1);
-  
-      const newDestinationColumn = Array.from(destinationColumn);
-      newDestinationColumn.splice(destination.index, 0, draggedTask);
-  
-      const newTasks = [...tasks];
-      newTasks.forEach((task) => {
-        if (task.status === source.droppableId) {
-          task.status = destination.droppableId;
-        }
-      });
-  
-      setTasks(newTasks);
-    };
-  
-    const getColumnTasks = (status) => {
-      return tasks.filter((task) => task.status === status);
+  useEffect(() => {
+    // Načtení úkolů z databáze po načtení stránky
+    fetchTodosFromDatabase();
+  }, []);
+
+  const fetchTodosFromDatabase = async () => {
+    try {
+      // Make an HTTP GET request to fetch tasks from the database
+      const response = await axios.get('/api/todos');
+      const data = response.data;
+      setTodos(data);
+    } catch (error) {
+      console.log('Error úkol:', error);
+    }
+  };
+  const saveTodosToDatabase = async (newTodos) => {
+    try {
+      // Make an HTTP POST request to save tasks to the database
+      await axios.post('/api/todos', newTodos);
+    } catch (error) {
+      console.log('Error ukládání úkolu:', error);
+    }
+  };
+
+  const getColumnTodos = (todos, columnId) => {
+    return todos[columnId] || [];
+  };
+
+  const handleDragEnd = (result) => {
+    const { source, destination } = result;
+
+    if (!destination) return;
+
+    const sourceColumnId = source.droppableId;
+    const destinationColumnId = destination.droppableId;
+    const sourceIndex = source.index;
+    const destinationIndex = destination.index;
+
+    if (
+      sourceColumnId === destinationColumnId &&
+      sourceIndex === destinationIndex
+    )
+      return;
+
+    const sourceColumnTodos = getColumnTodos(todos, sourceColumnId);
+    const destinationColumnTodos = getColumnTasks(todos, destinationColumnId);
+    const [removedTodo] = sourceColumnTodos.splice(sourceIndex, 1);
+    destinationColumnTodos.splice(destinationIndex, 0, removedTodo);
+
+    const newTodos = {
+      ...todos,
+      [sourceColumnId]: sourceColumnTodos,
+      [destinationColumnId]: destinationColumnTodos,
     };
 
-    const handleNewTaskSubmit = (e) => {
-        e.preventDefault();
-        if (newTaskContent.trim() === '') return;
-    
-        const newTask = {
-          id: `task-${tasks.length + 1}`,
-          content: newTaskContent,
-          status: 'Úkoly',
-        };
-    
-        setTasks([...tasks, newTask]);
-        setNewTaskContent('');
-        setShowModal(false);
-      };
-    
-    
+    setTodos(newTodos);
+    saveTodosToDatabase(newTodos);
+  };
+
+  const handleNewTodoSubmit = async (e) => {
+    e.preventDefault();
+    if (newTodoContent.trim() === '') return;
+
+    const newTodo = {
+      id: `todo-${Date.now()}`,
+      content: newTodoContent,
+      created: todoCreated,
+      deadline: todoDeadline,
+      description: todoDescription,
+    };
+
+    const newTodos = {
+      ...todos,
+      'Úkoly': [...getColumnTodos(todos, 'Úkoly'), newTodo],
+    };
+
+    setTodos(newTodos);
+    setNewTodoContent('');
+    setTodoCreated('');
+    setTodoDeadline('');
+    setTodoDescription('');
+    setShowModal(false);
+
+    await saveTodosToDatabase(newTodos);
+  };
+
+  const handleDeleteTodo = (todoId, columnId) => {
+    const columnTodos = getColumnTodos(todos, columnId);
+    const updatedTodos = columnTodos.filter((todo) => todo.id !== todoId);
+
+    const newTodos = {
+      ...todos,
+      [columnId]: updatedTodos,
+    };
+
+    setTodos(newTodos);
+    saveTodosToDatabase(newTodos);
+  };
+
+ 
+  const handleTodoClick  = (todoId, columnId) => {
+    const columnTodos = getColumnTodos(todos, columnId);
+    const selectedTodo = columnTodos.find((todo) => todo.id === todoId);
+    setSelectedTodo(selectedTodo);
+    setShowTodoDetailsModal(true);
+  };
 
   return (
     <Helmet title=" - Plánovač">
-        <Container fluid>
-            <Row>
-                <Navbar/>
-                <div className="dashboard">
-                    <Sidebar/>
-                    <div className="main">
-                    <div className="path">
-                        <Link to="/nastenka">Nástěnka</Link> &gt; <span>Plánovač</span>
-                     </div>
-                     <div className="header">
-                     <h2>Plánovač</h2>
-                    <Link className="add"  onClick={() => setShowModal(true)}>
-                        Přidat událost
-                    </Link>
-                     </div>
-                     <div className="todo-container">
-                     <DragDropContext onDragEnd={handleDragEnd}>
-                  <div className="column">
-                    <h3>Úkoly</h3>
-                    <Droppable droppableId="column-1" >
-                      {(provided) => (
-                        <div {...provided.droppableProps} ref={provided.innerRef} className="task-list" id="task-1" >
-                          {getColumnTasks('Úkoly').map((task, index) => (
-                            <Draggable key={task.id} draggableId={task.id} index={index}>
-                              {(provided) => (
-                                <div
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                  ref={provided.innerRef}
-                                  className="task"
-                                >
-                                  {task.content}
-                                </div>
-                              )}
-                            </Draggable>
-                          ))}
-                          {provided.placeholder}
-                        </div>
-                      )}
-                    </Droppable>
-                  </div>
-                  <div className="column">
-                    <h3>Probíhající</h3>
-                    <Droppable droppableId="column-2">
+      <Container fluid>
+        <Row>
+          <Navbar />
+          <div className="dashboard">
+            <Sidebar />
+            <div className="main">
+              <div className="path">
+                <Link to="/nastenka">Nástěnka</Link> &gt; <span>Plánovač</span>
+              </div>
+              <div className="header">
+                <h2>Plánovač</h2>
+                <Link className="add" onClick={() => setShowModal(true)}>
+                  Přidat úkol
+                </Link>
+              </div>
+              <div className="todo-container">
+                <DragDropContext onDragEnd={handleDragEnd}>
+                  {Object.entries(todos).map(([columnId, columnTodos], index) => (
+                    <div className="column" key={columnId}>
+                      <h3
+                        style={{
+                          color:
+                            index === 0 ? '#f39c12' : index === 1 ? '#3498db' : index === 2 ? '#2ecc71' : '',
+                        }}
+                      >
+                        {columnId}
+                      </h3>
+                      <Droppable droppableId={columnId}>
                         {(provided) => (
-                        <div {...provided.droppableProps} ref={provided.innerRef} className="task-list" id="task-2">
-                            {getColumnTasks('Probíhající').map((task, index) => (
-                            <Draggable key={task.id} draggableId={task.id} index={index}>
+                          <div
+                            {...provided.droppableProps}
+                            ref={provided.innerRef}
+                            className="task-list"
+                            style={{
+                              backgroundColor:
+                                index === 0 ? '#f39c12' : index === 1 ? '#3498db' : index === 2 ? '#2ecc71' : '',
+                            }}
+                          >
+                            {columnTodos.map((todo, index) => (
+                              <Draggable key={todo.id} draggableId={todo.id} index={index}>
                                 {(provided) => (
-                                <div
+                                  <div
                                     {...provided.draggableProps}
                                     {...provided.dragHandleProps}
                                     ref={provided.innerRef}
                                     className="task"
-                                >
-                                    {task.content}
-                                </div>
+                                    onClick={() => handleTodoClick(todo)}
+                                  >
+                                    {todo.content}
+                                    <BsFillTrashFill
+                                      onClick={() => handleDeleteTodo(columnId, todo.id)}
+                                      className="icon_trash"
+                                    />
+                                  </div>
                                 )}
-                            </Draggable>
+                              </Draggable>
                             ))}
                             {provided.placeholder}
-                        </div>
+                          </div>
                         )}
-                    </Droppable>
+                      </Droppable>
                     </div>
-                    <div className="column">
-                    <h3>Dokončeno</h3>
-                    <Droppable droppableId="column-3">
-                        {(provided) => (
-                        <div {...provided.droppableProps} ref={provided.innerRef} className="task-list" id="task-3">
-                            {getColumnTasks('Dokončeno').map((task, index) => (
-                            <Draggable key={task.id} draggableId={task.id} index={index}>
-                                {(provided) => (
-                                <div
-                                    {...provided.draggableProps}
-                                    {...provided.dragHandleProps}
-                                    ref={provided.innerRef}
-                                    className="task"
-                                >
-                                    {task.content}
-                                </div>
-                                )}
-                            </Draggable>
-                            ))}
-                            {provided.placeholder}
-                        </div>
-                        )}
-                    </Droppable>
-                    </div>
-                    
-                    </DragDropContext>
-                     </div>
-                   
-                    </div>
-                </div>
-            </Row>
-            <Modal show={showModal} onHide={() => setShowModal(false)}>
-            <Modal.Header closeButton>
-                <Modal.Title>Přidat úkol</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <Form onSubmit={handleNewTaskSubmit}>
-                <Form.Group controlId="newTaskContent">
-                    <Form.Label>Název úkolu</Form.Label>
-                    <Form.Control
-                    type="text"
-                    value={newTaskContent}
-                    onChange={(e) => setNewTaskContent(e.target.value)}
-                    />
-                </Form.Group>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowModal(false)}>
-                    Zrušit
-                    </Button>
-                    <Button variant="primary" type="submit">
-                    Přidat
-                    </Button>
-                </Modal.Footer>
-                </Form>
-            </Modal.Body>
-            </Modal>
-        </Container>
+                  ))}
+                </DragDropContext>
+              </div>
+            </div>
+          </div>
+        </Row>
+      </Container>
+      <Modal show={showModal} onHide={() => setShowModal(false)} size="xl">
+        <Modal.Header closeButton>
+          <Modal.Title>Přidat úkol</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleNewTodoSubmit}>
+            <Form.Group controlId="newTaskContent">
+              <Form.Label>Název úkolu</Form.Label>
+              <Form.Control
+                type="text"
+                value={newTodoContent}
+                onChange={(e) => setNewTodoContent(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="taskCreated">
+              <Form.Label>Datum vytvoření</Form.Label>
+              <Form.Control
+                type="date"
+                value={todoCreated}
+                onChange={(e) => setTodoCreated(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="taskDeadline">
+              <Form.Label>Datum dokončení</Form.Label>
+              <Form.Control
+                type="date"
+                value={todoDeadline}
+                onChange={(e) => setTodoDeadline(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="description" className="col-12">
+              <Form.Label>Popis</Form.Label>
+              <CKEditor
+                editor={ClassicEditor}
+                data={todoDescription}
+                config={{
+                  ckfinder: {
+                    uploadUrl: '../assets/img',
+                  },
+                  filebrowserImageAllowedTypes: ['jpeg', 'jpg', 'png', 'gif'],
+                }}
+                onChange={(event, editor) => setTodoDescription(editor.getData())}
+              />
+            </Form.Group>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setShowModal(false)}>
+                Zrušit
+              </Button>
+              <Button variant="primary" type="submit">
+                Přidat
+              </Button>
+            </Modal.Footer>
+          </Form>
+        </Modal.Body>
+      </Modal>
+      <Modal show={showTodoDetailsModal} onHide={() => setShowTodoDetailsModal(false)} size="xl">
+        <Modal.Header closeButton>
+          <Modal.Title>Podrobnosti úkolu</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedTodo && (
+            <div>
+              <span className="fw-bold">Název úkolu:</span>
+              <h5 className="text-success mb-3"> {selectedTodo.content}</h5>
+              <div className="date d-flex justify-content-around">
+                <span className="fw-bold">Datum vytvoření:</span>
+                <p className="mb-3">{format(new Date(selectedTodo.created), 'dd.MM.yyyy')}</p>
+                <span className="fw-bold">Datum dokončení:</span>
+                <p className="mb-3 text-danger">{format(new Date(selectedTodo.deadline), 'dd.MM.yyyy')}</p>
+              </div>
+              <span className="fw-bold ">Popis úkolu:</span>
+              <div className="mt-3" dangerouslySetInnerHTML={{ __html: selectedTodo.description }}></div>
+            </div>
+          )}
+        </Modal.Body>
+      </Modal>
     </Helmet>
-  )
-}
+  );
+};
 
-export default ToDo
+export default ToDo;

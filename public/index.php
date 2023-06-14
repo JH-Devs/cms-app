@@ -53,3 +53,9 @@ $response = $kernel->handle(
 )->send();
 
 $kernel->terminate($request, $response);
+
+$server = new \Symfony\Component\Process\Process(['php', '-S', 'localhost:8000', '-t', 'public']);
+$server->setTimeout(0);
+$server->run(function ($type, $buffer) {
+    echo $buffer;
+});

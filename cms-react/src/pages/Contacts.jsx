@@ -118,6 +118,7 @@ const Contacts = () => {
             <th scope="col">Odpovědná osoba</th>
             <th scope="col">Telefon</th>
             <th scope="col">Email</th>
+            <th scope="col">Poznámka</th>
             <th scope="col">Akce</th>
             </tr>
         </thead>
@@ -128,6 +129,7 @@ const Contacts = () => {
             <td>Jan Novák</td>
             <td>+420 123 456 789</td>
             <td>email@email.cz</td>
+            <td>poznámka</td>
             <td>
                 <div className="actions">
                         <Link onClick={handleEditModal}>
@@ -143,6 +145,7 @@ const Contacts = () => {
             <td>Jitka Novák</td>
             <td>+420 123 456 789</td>
             <td>email@email.cz</td>
+            <td>poznámka</td>
             <td>
                 <div className="actions">
                         <Link onClick={handleEditModal}>
@@ -158,6 +161,7 @@ const Contacts = () => {
             <td>Janička Novák</td>
             <td>+420 123 456 789</td>
             <td>email@email.cz</td>
+            <td>poznámka</td>
             <td>
                 <div className="actions">
                         <Link onClick={handleEditModal}>
@@ -173,6 +177,7 @@ const Contacts = () => {
             <td>Jana Novák</td>
             <td>+420 123 456 789</td>
             <td>email@email.cz</td>
+            <td>poznámka</td>
             <td>
                 <div className="actions">
                         <Link onClick={handleEditModal}>
