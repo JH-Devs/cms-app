@@ -10,7 +10,7 @@ class TodoController extends Controller
 {
     public function index()
     {
-        $todos = Todo::all();
+        $todos = Todo::all()->toArray();
         return response()->json($todos, 200);
     }
 

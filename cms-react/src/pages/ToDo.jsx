@@ -33,7 +33,7 @@ const ToDo = () => {
   const fetchTodosFromDatabase = async () => {
     try {
       // Make an HTTP GET request to fetch tasks from the database
-      const response = await axios.get('/api/todos');
+      const response = await axios.get('http://127.0.0.1:8000/api/todos');
       const data = response.data;
       setTodos(data);
     } catch (error) {
@@ -43,7 +43,7 @@ const ToDo = () => {
   const saveTodosToDatabase = async (newTodos) => {
     try {
       // Make an HTTP POST request to save tasks to the database
-      await axios.post('/api/todos', newTodos);
+      await axios.post('http://127.0.0.1:8000/api/todos', newTodos);
     } catch (error) {
       console.log('Error ukládání úkolu:', error);
     }
@@ -70,7 +70,7 @@ const ToDo = () => {
       return;
 
     const sourceColumnTodos = getColumnTodos(todos, sourceColumnId);
-    const destinationColumnTodos = getColumnTasks(todos, destinationColumnId);
+    const destinationColumnTodos = getColumnTodos(todos, destinationColumnId);
     const [removedTodo] = sourceColumnTodos.splice(sourceIndex, 1);
     destinationColumnTodos.splice(destinationIndex, 0, removedTodo);
 
@@ -180,7 +180,7 @@ const ToDo = () => {
                                     {...provided.dragHandleProps}
                                     ref={provided.innerRef}
                                     className="task"
-                                    onClick={() => handleTodoClick(todo)}
+                                    onClick={() => handleTodoClick(todo.id, columnId)}
                                   >
                                     {todo.content}
                                     <BsFillTrashFill
